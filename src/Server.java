@@ -19,7 +19,7 @@ public class Server {
     // クライアントリクエストのリストを保持
     private List<ClientRequest> clientRequests = new ArrayList<>();
 
-    // サーバーのエントリーポイント
+    // サーバースタート
     public static void main(String[] args) {
         new Server().start();
     }
