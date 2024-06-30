@@ -94,7 +94,7 @@ public class Server {
         ) {
             writer.println(keyword);
         } catch (IOException e) {
-            System.out.println("データクラスとの接続例外: " + e.getMessage());
+            System.out.println("データクラスとの接続例外処理: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -117,7 +117,7 @@ public class Server {
                 playlistResult.add(line);
             }
         } catch (IOException e) {
-            System.out.println("プレイリストクラスとの接続処理例外: " + e.getMessage());
+            System.out.println("プレイリストクラスとの接続処理例外処理: " + e.getMessage());
             e.printStackTrace();
         }
         return playlistResult;
