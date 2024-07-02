@@ -8,22 +8,22 @@ import java.util.List;
 
 public class Server {
     private static final int PORT = 10001;
-    //private static final String IP_ADDRESS = "127.0.0.1"; // 仮置きのIPアドレス
+    private static final String IP_ADDRESS = "127.0.0.1"; // 仮置きのIPアドレス
     private static List<ClientData> clientDataList = new ArrayList<>();
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("サーバリスニング中 " + PORT);
+            System.out.println("Server is listening on port " + PORT);
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("新しいクライアントと接続: " + clientSocket.getInetAddress().getHostAddress());
+                System.out.println("New client connected: " + clientSocket.getInetAddress().getHostAddress());
                 
                 // クライアントハンドリングの処理を別スレッドで実行
                 new ClientHandler(clientSocket).start();
             }
         } catch (IOException e) {
-            System.out.println("サーバ例外: " + e.getMessage());
+            System.out.println("Server exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -44,16 +44,16 @@ public class Server {
                 synchronized (clientDataList) {
                     if (clientDataList.size() < 100) {
                         clientDataList.add(clientData);
-                        output.writeObject("データを受け取り、格納しました！");
+                        output.writeObject("Data received and stored successfully");
                     } else {
-                        output.writeObject("サーバはいっぱいです");
+                        output.writeObject("Server storage is full");
                     }
                 }
 
-                System.out.println("受け取ったデータ: " + clientData);
+                System.out.println("Received data: " + clientData);
 
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("クライアント処理例外: " + e.getMessage());
+                System.out.println("Client handler exception: " + e.getMessage());
                 e.printStackTrace();
             }
         }
