@@ -28,9 +28,9 @@ public class ClientData implements Serializable {
     @Override
     public String toString() {
         return "ClientData{" +
-                "desiredPlaylistDuration=" + desiredPlaylistDuration +
-                ", searchKeyword='" + searchKeyword + '\'' +
-                ", selectedAlgorithm=" + selectedAlgorithm +
+                "プレイリスト時間=" + desiredPlaylistDuration +
+                ", 検索キーワード='" + searchKeyword + '\'' +
+                ", 検索アルゴリズム=" + selectedAlgorithm +
                 '}';
     }
 }

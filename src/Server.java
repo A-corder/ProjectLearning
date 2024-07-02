@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Server {
     private static final int PORT = 10001;
-    private static final String IP_ADDRESS = "127.0.0.1"; // 仮置きのIPアドレス
+    //private static final String IP_ADDRESS = "127.0.0.1"; // 仮置きのIPアドレス
     private static List<ClientData> clientDataList = new ArrayList<>();
 
     public static void main(String[] args) {
