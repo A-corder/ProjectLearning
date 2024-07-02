@@ -33,4 +33,8 @@ public class ClientData implements Serializable {
                 ", 検索アルゴリズム=" + selectedAlgorithm +
                 '}';
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> branch 'master' of https://github.com/A-corder/ProjectLearning.git
