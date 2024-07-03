@@ -30,8 +30,13 @@ public class User {
 	private int condition;//最適化する条件
 	private Client client;
 	
+	private JLabel playListURL;//生成したプレイリストのURL
+	private JLabel time;//総再生時間を表示するラベル
+	private static int count = 0;
+    StringBuilder sb = new StringBuilder();// 仮のテキストを設定
 	private String allTime;//最終画面表示用再生時間
 	private String URL;//最終画面表示用プレイリストURL
+	private boolean flag = false;
 	
 	//画面遷移
 	public User(Client client) {
@@ -39,9 +44,36 @@ public class User {
 		Home home = new Home();
 	}
 
-//	public static void main(String[] args) {
-//		// TODO 自動生成されたメソッド・スタブ
-//	}
+	//メッセージをクライアントから受け取る
+			public void fromClient(String msg) {
+				if(count == 0) {
+					if(msg == "error") {
+						Error error = new Error();
+					}else {
+						System.out.println("ここまでOK1");
+						playListURL = new JLabel(msg);
+						playListURL.setBounds(200, 20, 250, 20);
+						count++;
+					}
+				}else if(count == 1) {
+					System.out.println("ここまでOK2");
+					count++;
+					time = new JLabel(msg);
+					time.setBounds(670, 20, 250, 20);
+				}else {
+					System.out.println("ここまでOK3");
+					System.out.println(msg);
+					if(msg == "END") {
+						flag = true;
+					}else {
+						sb.append(msg+"\n");
+					}
+				}
+			}
+	
+	public boolean checkFlag() {
+		return flag;
+	}
 	
 	//ゲーム画面の背景を表示するクラス
 	class BackgroundPanel extends JPanel {
@@ -396,8 +428,9 @@ public class User {
 					}
 					
 					//待機画面表示
-					Waiting wating = new Waiting();
 					this.setVisible(false);
+					Waiting wating = new Waiting();
+					
 				}else {
 					//警告文表示
 					warn.setVisible(true);
@@ -430,10 +463,24 @@ public class User {
 			
 			client.fromUser(viewTime, searchWord,condition);
 			
+			System.out.println("ここまでOK");
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 			
-			showPlayList list = new showPlayList();
+			while(true) {
+				fromClient("https:///aaaaaaaaaaa");
+				fromClient("59:52");
+				fromClient("YOASOBI「アイドル」 Official Music Video");
+				fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+				fromClient("END");
+				
+				if(checkFlag()) {
+					this.setVisible(false);
+					break;
+				}
+			}
+			
+			showPlayList showplaylist = new showPlayList();
 			setVisible(false);
 		}
 		
@@ -445,12 +492,10 @@ public class User {
 		private JTextArea playlistTextArea;
 		private JLabel yourPlayList;//あなたのプレイリストラベル
 		private JLabel allViewTime;//総再生時間テキストラベル
-		private JLabel playListURL;//生成したプレイリストのURL
-		private JLabel time;//総再生時間を表示するラベル
+		
 		private JButton change;//検索条件を変えるボタン
 		private ImageIcon changeIcon = new ImageIcon("Button.png");
-		private static int count = 0;
-        StringBuilder sb = new StringBuilder();// 仮のテキストを設定
+		
 		
 		showPlayList(){
 			setTitle("プレイリスト");//上のタイトル指定
@@ -464,10 +509,13 @@ public class User {
 			yourPlayList.setBounds(50, 20, 250, 20);
 			c.add(yourPlayList);
 			
-			allViewTime = new JLabel("総再生時間 : ");
+			c.add(playListURL);
+			
+			allViewTime = new JLabel("総再生時間  ");
 			allViewTime.setBounds(600, 20, 250, 20);
 			c.add(allViewTime);
 			
+			c.add(time);
 			
 			//プレイリスト表示エリア
 		    playlistTextArea = new JTextArea();
@@ -475,11 +523,7 @@ public class User {
 	        playlistTextArea.setWrapStyleWord(true);
 	        playlistTextArea.setEditable(false);
 	         
-	        
-	        for(int i=0;i<100;i++) {
-	         	 sb.append("Song"+i+"\n");
-	        }
-
+	        //プレイリストをテキストエリアに表示
 	        playlistTextArea.setText(sb.toString());
 
 	        //スクロールバー
@@ -505,23 +549,7 @@ public class User {
 			this.setVisible(false);
 		}
 		
-		//メッセージをクライアントから受け取る
-		void receiveMessage(String msg) {
-			if(count == 0) {
-				if(msg == "error") {
-					Error error = new Error();
-				}else {
-					playListURL = new JLabel(msg);
-					playListURL.setBounds(50, 30, 250, 20);
-					count++;
-				}
-			}else if(count == 1) {
-				time = new JLabel(msg);
-				time.setBounds(650, 20, 250, 20);
-			}else {
-				sb.append(msg+"\n");
-			}
-		}
+		
 		
 	}
 	
