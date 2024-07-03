@@ -75,10 +75,13 @@ class ServerThread extends Thread {
             String[] songTitles = {"Song 1", "Song 2", "Song 3"};
             String[] songUrls = {"http://example.com/song1", "http://example.com/song2", "http://example.com/song3"};
 
+	    // 合計時間を分:秒に変換
+            String totalTimeFormatted = formatTime(totalTime)
+;
             // プレイリストデータをクライアントに送信する
             writer.write(playlistUrl);
             writer.newLine();
-            writer.write(String.valueOf(totalTime));
+            writer.write(totalTimeFormatted);
             writer.newLine();
             for (int i = 0; i < songTitles.length; i++) {
                 writer.write(songTitles[i]);
@@ -98,5 +101,10 @@ class ServerThread extends Thread {
         } finally {
             semaphore.release();
         }
+    }
+    private String formatTime(int totalSeconds) {
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        return String.format("%d:%02d", minutes, seconds);
     }
 }
