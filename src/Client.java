@@ -1,13 +1,9 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 
 public class Client{
     
-    String IPa;//IPアドレス
+    String IP;//IPアドレス
     int port;//ポート番号
     
     //サーバーに送る用のデータたち
@@ -16,9 +12,9 @@ public class Client{
     int condition;//最適化条件
     
     //コンストラクタ
-    Client(String IPa, int port){
-        this.IPa = IPa;
-        this.port = 10001;
+    Client(String IP, int port){
+        this.IP = IP;
+        this.port = port;
         
     }
     
@@ -85,12 +81,21 @@ public class Client{
 		Socket socket = null;
 		BufferedWriter out = null;
 		BufferedReader in = null;
-		Client client = new Client("aaa", 10001);
+
+		String localIP = null;
+		try{
+			InetAddress addr = InetAddress.getLocalHost();
+			localIP = addr.getHostAddress();
+		}catch(Exception e){
+			System.out.println(e.toString());
+		}
+		
+		Client client = new Client(localIP, 10001);
 		User user = new User(client);
 		
 		try {
 			//ソケットの接続試行。IPa、portは別で指定
-			socket = client.setConnect("IP",10001);
+			socket = client.setConnect(client.IP,client.port);
 			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			Receiver receiver = new Receiver(socket,user);
