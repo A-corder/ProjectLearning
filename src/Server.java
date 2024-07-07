@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class Server {
@@ -68,6 +70,13 @@ class ServerThread extends Thread {
             System.out.println("時間: " + time);
             System.out.println("検索ワード: " + searchWord);
             System.out.println("最適化条件: " + optimizationCondition);
+            
+            // Dataクラスのメソッドを呼び出して、検索結果を取得する
+            List<List<Object>> videoData = Data.processSearchWord(searchWord);
+            
+            // sortクラスのメソッドを呼び出して、ソートされたデータを取得する
+            ArrayList<ArrayList<Object>> sortedData = sort.processAndSort(videoData, time, optimizationCondition);
+
 
             // プレイリストデータを生成する（デモ用）
             String playlistUrl = "http://example.com/playlist";
@@ -75,7 +84,7 @@ class ServerThread extends Thread {
             String[] songTitles = {"Song 1", "Song 2", "Song 3"};
             String[] songUrls = {"http://example.com/song1", "http://example.com/song2", "http://example.com/song3"};
 
-	    // 合計時間を分:秒に変換
+	        // 合計時間を分:秒に変換
             String totalTimeFormatted = formatTime(totalTime)
 ;
             // プレイリストデータをクライアントに送信する
@@ -89,6 +98,18 @@ class ServerThread extends Thread {
                 writer.write(songUrls[i]);
                 writer.newLine();
             }
+            
+            // ソートされたデータをクライアントに送信する
+            /*for (ArrayList<Object> video : sortedData) {
+                writer.write("Title: " + video.get(0));
+                writer.newLine();
+                writer.write("Duration: " + formatTime((int) video.get(1)));
+                writer.newLine();
+                writer.write("View Count: " + video.get(2));
+                writer.newLine();
+                writer.write("Video URL: https://www.youtube.com/watch?v=" + video.get(3));
+                writer.newLine();
+            }*/
 
             writer.flush();
 
