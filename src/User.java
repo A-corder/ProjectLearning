@@ -28,15 +28,15 @@ public class User {
 	private String viewTime;//再生時間
 	private String searchWord;//検索ワード
 	private int condition;//最適化する条件
-	private Client client;
+	private Client client; //クライアントクラス
 	
-	private JLabel playListURL;//生成したプレイリストのURL
 	private JLabel time;//総再生時間を表示するラベル
-	private static int count = 0;
-    StringBuilder sb = new StringBuilder();// 仮のテキストを設定
+	private static int count = 0; //送られる順番をカウント
+    StringBuilder sbPlayList = new StringBuilder();//プレイリストをまとめる
+    StringBuilder sbURL = new StringBuilder(); //URLをまとめる
 	private String allTime;//最終画面表示用再生時間
 	private String URL;//最終画面表示用プレイリストURL
-	private boolean flag = false;
+	private boolean flag = false; //検索画面に遷移するかを判断するフラグ
 	
 	//画面遷移
 	public User(Client client) {
@@ -46,31 +46,28 @@ public class User {
 
 	//メッセージをクライアントから受け取る
 			public void fromClient(String msg) {
+				//最初にメッセージを受け取るとき
 				if(count == 0) {
-					if(msg == "error") {
+					if(msg == "error") {//エラーが発生したら
 						Error error = new Error();
-					}else {
-						System.out.println("ここまでOK1");
-						playListURL = new JLabel(msg);
-						playListURL.setBounds(200, 20, 250, 20);
+					}else {				//全体のURLを受け取ったら
+						sbURL.append(msg);
 						count++;
 					}
-				}else if(count == 1) {
-					System.out.println("ここまでOK2");
+				}else if(count == 1) {	//2回目にメッセージを受け取る時、つまり、全体の時間を受け取るとき
 					count++;
 					time = new JLabel(msg);
 					time.setBounds(670, 20, 250, 20);
-				}else {
-					System.out.println("ここまでOK3");
-					System.out.println(msg);
-					if(msg == "END") {
-						flag = true;
+				}else {					//3回目以降にメッセージを受け取る時、
+					if(msg == "END") { //サーバーから終わりときたら、
+						flag = true; //終わりのフラッグを挙げる
 					}else {
-						sb.append(msg+"\n");
+						sbPlayList.append("・ " + msg+"\n"); //曲を追加していく
 					}
 				}
 			}
 	
+	//検索画面結果を表示するためのフラグをチェックする
 	public boolean checkFlag() {
 		return flag;
 	}
@@ -269,6 +266,12 @@ public class User {
 			genreText.setEnabled(status1);
 			artistText.setEnabled(status2);
 			
+			if(status1) { //もしジャンルボタンが押されたら
+				artistText.setText("");
+			}else {
+				genreText.setText("");
+			}
+			
 			//次へボタンが押されたとき
 			if(e.getActionCommand()=="次へ") {
 				if(!status1 && !status2) {//ラジオボタンが両方とも押されてないなら
@@ -463,7 +466,6 @@ public class User {
 			
 			client.fromUser(viewTime, searchWord,condition);
 			
-			System.out.println("ここまでOK");
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 			
@@ -489,10 +491,10 @@ public class User {
 	class showPlayList extends JFrame implements ActionListener{
 		private Container c;//コンテナ
 		private JScrollPane scrollPane;
-		private JTextArea playlistTextArea;
+		private JTextArea playListTextArea;
 		private JLabel yourPlayList;//あなたのプレイリストラベル
 		private JLabel allViewTime;//総再生時間テキストラベル
-		
+		private JTextArea playListURL;
 		private JButton change;//検索条件を変えるボタン
 		private ImageIcon changeIcon = new ImageIcon("Button.png");
 		
@@ -509,25 +511,32 @@ public class User {
 			yourPlayList.setBounds(50, 20, 250, 20);
 			c.add(yourPlayList);
 			
+			//全体のプレイリストURL配置
+			playListURL = new JTextArea();
+			playListURL.setBounds(200, 20, 250, 20);
+			playListURL.setEditable(false);
+			playListURL.setText(sbURL.toString());
 			c.add(playListURL);
 			
+			//総再生時間ラベルを配置
 			allViewTime = new JLabel("総再生時間  ");
 			allViewTime.setBounds(600, 20, 250, 20);
 			c.add(allViewTime);
 			
+			//サーバーから受け取った時間(59:52など)を配置
 			c.add(time);
 			
 			//プレイリスト表示エリア
-		    playlistTextArea = new JTextArea();
-	        playlistTextArea.setLineWrap(true);
-	        playlistTextArea.setWrapStyleWord(true);
-	        playlistTextArea.setEditable(false);
+		    playListTextArea = new JTextArea();
+	        playListTextArea.setLineWrap(true);
+	        playListTextArea.setWrapStyleWord(true);
+	        playListTextArea.setEditable(false);
 	         
 	        //プレイリストをテキストエリアに表示
-	        playlistTextArea.setText(sb.toString());
+	        playListTextArea.setText(sbPlayList.toString());
 
 	        //スクロールバー
-	        scrollPane = new JScrollPane(playlistTextArea);
+	        scrollPane = new JScrollPane(playListTextArea);
 	        scrollPane.setBounds(50, 50, 700, 400);
 	        c.add(scrollPane);
 
@@ -545,6 +554,10 @@ public class User {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
+			//カウント、テキストエリアを初期化
+			count = 0;
+			sbPlayList.setLength(0); // StringBuilderをクリア
+		    sbURL.setLength(0); // StringBuilderをクリア
 			SearchFrame1 frame1 = new SearchFrame1();
 			this.setVisible(false);
 		}
