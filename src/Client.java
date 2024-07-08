@@ -11,6 +11,8 @@ public class Client{
     String keyword;//検索ワード
     int condition;//最適化条件
     
+    static boolean check = false;//メソッド呼び出しタイミング調整用
+    
     //コンストラクタ
     Client(String IP, int port){
         this.IP = IP;
@@ -37,6 +39,7 @@ public class Client{
     	this.time = Integer.parseInt(time);
     	this.keyword = keyword;
     	this.condition = condition;
+    	check = true;//sendOperation()呼び出しフラグ
     	
     	System.out.println("時間:"+this.time);
     	System.out.println("検索ワード:"+this.keyword);
@@ -45,35 +48,16 @@ public class Client{
     
     //情報をサーバーに送る
     public void sendOperation(BufferedWriter out){
-        
         try{
         	out.write(this.time);
         	out.write(this.keyword);
         	out.write(this.condition);
+        	check = false;//呼び出しフラグを折る
         }catch(Exception e){
             System.out.println(e.toString());
         }
         
     }
-    
-    //多分いらない
-//    //URL・曲名を受け取る
-//    ArrayList<String> getMessage(BufferedReader in){
-//        
-//    	int i = 0;
-//    	ArrayList<String> list = new ArrayList<String>();
-//    	
-//    	try {
-//    		while(list.add(in.readLine())) {
-//    			System.out.println("message : "+list.get(i)+"");
-//    			i++;
-//    		}
-//    	}catch(Exception e) {
-//    		System.out.println(e.toString());
-//    	}
-//    	
-//    	return list;
-//    }
     
 	public static void main(String[] args) {
 		
@@ -81,6 +65,8 @@ public class Client{
 		Socket socket = null;
 		BufferedWriter out = null;
 		BufferedReader in = null;
+		
+		boolean check = false;
 
 		String localIP = null;
 		try{
@@ -100,47 +86,15 @@ public class Client{
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			Receiver receiver = new Receiver(socket,user);
 			receiver.start();
-			
-			//再生時間time, 検索キーワードword, 条件指定order
-			//ユーザープログラムからの入力を受け取る
-			String time = null;
-    		String word = null;
-    		String order = null;
-			
-    		//たぶんいらない
-//			while(time.equals(null)||word.equals(null)||order.equals(null)) {
-//				//time = user.sendMessage(frame1.viewTime);
-//				
-//				//word = user.sendMessage(frame1.searchWord);
-//				
-//				//if(frame2.totalReview.isSelected())
-//				//	order = user.sendMessage("総再生回数多め");
-//				//else if(frame2.moreSongs.isSelected())
-//				//	order = user.sendMessage("曲数多め");
-//				//else if(frame2.fewSongs.isSelected())
-//				//	order = user.sendMessage("曲数少なめ");
-//				//else if(frame2.justTime.isSelected())
-//				//	order = user.sendMessage("総再生時間ぴったり");
-//			}
-			
-			//サーバー側へユーザープログラムの入力を送信
-			client.sendOperation(out);
-			
-			//たぶんいらない
-			//最終的にサーバー側からURLを受け取る処理。ユーザープログラムに投げる
-			//client.getMessage(in);
+
+			while(true){
+				while(!check) ;
+				//サーバー側へユーザープログラムの入力を送信
+				client.sendOperation(out);
+			}
 			
 		}catch(Exception e) {
 			System.out.println(e.toString());
-		}finally {
-			try {
-				//ソケットとバッファを閉じる
-				in.close();
-				out.close();
-				socket.close();
-			}catch(Exception e) {
-				System.out.println(e.toString());
-			}
 		}
 	}
 	
@@ -158,7 +112,7 @@ class Receiver extends Thread{
 			sisr = new InputStreamReader(socket.getInputStream()); //受信したバイトデータを文字ストリームに
 			br = new BufferedReader(sisr);//文字ストリームをバッファリングする
 		} catch (IOException e) {
-			System.err.println("データ受信時にエラーが発生しました: " + e);
+			System.err.println("データ受信時にエラーが発生しました(C): " + e);
 		}
 	}
 	
@@ -172,7 +126,7 @@ class Receiver extends Thread{
 				}
 			}
 		} catch (IOException e){
-			System.err.println("データ受信時にエラーが発生しました: " + e);
+			System.err.println("データ受信時にエラーが発生しました(R): " + e);
 		}
 	}
 }
