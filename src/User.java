@@ -51,7 +51,7 @@ public class User {
 			public void fromClient(String msg) {
 				//最初にメッセージを受け取るとき
 				if(count == 0) {
-					if(msg == "error") {//エラーが発生したら
+					if(msg == "サーバーが忙しいです。後でもう一度お試しください。" || msg == "error") {//エラーが発生したら
 						errorFlag = true;
 						Error error = new Error();
 					}else {				//全体のURLを受け取ったら
@@ -59,7 +59,7 @@ public class User {
 						count++;
 					}
 				}else if(count == 1) {	//2回目にメッセージを受け取る時、つまり、全体の時間を受け取るとき
-					if(msg == "error") {//エラーが発生したら
+					if(msg == "サーバーが忙しいです。後でもう一度お試しください。"|| msg == "error") {//エラーが発生したら
 						Error error = new Error();
 						errorFlag = true;
 					}
@@ -67,7 +67,7 @@ public class User {
 					time = new JLabel(msg);
 					time.setBounds(700, 15, 250, 20);
 				}else {					//3回目以降にメッセージを受け取る時、
-					if(msg == "error") {//エラーが発生したら
+					if(msg == "サーバーが忙しいです。後でもう一度お試しください。"|| msg == "error") {//エラーが発生したら
 						Error error = new Error();
 						errorFlag = true;
 					}else if(msg == "END") { //サーバーから終わりときたら、
