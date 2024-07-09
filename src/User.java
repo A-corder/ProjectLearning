@@ -127,12 +127,6 @@ public class User {
 			c = getContentPane();//フレームのペインを取得
 			c.setLayout(null);
 			
-//			//Mu-Timerを生成、配置
-//			MuTimer = new JLabel("Mu-Timer");
-//			MuTimer.setFont(new Font("Arial", Font.BOLD, 50));
-//			MuTimer.setBounds(270,80,250,80);
-//			c.add(MuTimer);
-			
 			//プレイリスト生成ボタンを生成、配置
 			generateButton = new JButton("プレイリスト生成",generateIcon);
 			generateButton.setFont(new Font("MS Gothic", Font.BOLD, 24));
@@ -475,53 +469,11 @@ public class User {
 			c = getContentPane();//フレームのペインを取得
 			c.setLayout(null);
 			
-//			generateNowLabel = new JLabel("プレイリストを生成しています");
-//			generateNowLabel.setBounds(300, 75, 250, 20);
-//			c.add(generateNowLabel);
-//			
-//			watingLabel = new JLabel("しばらくお待ちください");
-//			watingLabel.setBounds(320, 100, 250, 20);
-//			c.add(watingLabel);
-			
 			client.fromUser(viewTime, searchWord,condition);
 			
 			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
-			
-			/*デモ*/
-//			fromClient("https:///aaaaaaaaaaa");
-//			fromClient("59:52");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-//			fromClient("YOASOBI「アイドル」 Official Music Video");
-////		fromClient("error");
-//			fromClient("END");
-			
 			
 			// サーバーの応答を待つスレッドを開始
             new Thread(() -> {
