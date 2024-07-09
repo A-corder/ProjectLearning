@@ -74,21 +74,29 @@ class ServerThread extends Thread {
             // Dataクラスのメソッドを呼び出して、検索結果を取得する
             List<List<Object>> videoData = Data.processSearchWord(searchWord);
             
-            // sortクラスのメソッドを呼び出して、ソートされたデータを取得する
-            ArrayList<ArrayList<Object>> sortedData = sort.processAndSort(videoData, time, optimizationCondition);
+            // Playlistクラスのメソッドを呼び出して、ソートされたデータを取得する
+            ArrayList<ArrayList<Object>> sortedData = Playlist.processAndSort(videoData, time, optimizationCondition);
+            
+            // プレイリスト総時間を計算
+            int totalTime = calculateTotalTime(sortedData);
+            
+            // プレイリストURLを取得
+            String playlistUrl = Data.getPlaylistURL(sortedData);
+            System.out.println("プレイリストのURL: " + playlistUrl);
 
 
             // プレイリストデータを生成する（デモ用）
-            String playlistUrl = "http://example.com/playlist";
-            int totalTime = 3600; // 例として合計時間を秒で設定
+            String url = "http://example.com/playlist";
+            int Sumtime = 3600; // 例として合計時間を秒で設定
             String[] songTitles = {"Song 1", "Song 2", "Song 3"};
             String[] songUrls = {"http://example.com/song1", "http://example.com/song2", "http://example.com/song3"};
+            
+            // 合計時間を分:秒に変換
+            String totalTimeFormatted = formatTime(Sumtime);
 
-	        // 合計時間を分:秒に変換
-            String totalTimeFormatted = formatTime(totalTime)
-;
+
             // プレイリストデータをクライアントに送信する
-            writer.write(playlistUrl);
+            writer.write(url);
             writer.newLine();
             writer.write(totalTimeFormatted);
             writer.newLine();
@@ -98,6 +106,9 @@ class ServerThread extends Thread {
                 writer.write(songUrls[i]);
                 writer.newLine();
             }
+            
+            writer.write("END");
+            writer.newLine();
             
             // ソートされたデータをクライアントに送信する
             /*for (ArrayList<Object> video : sortedData) {
@@ -123,6 +134,16 @@ class ServerThread extends Thread {
             semaphore.release();
         }
     }
+    
+    private int calculateTotalTime(ArrayList<ArrayList<Object>> playlist) {
+        int totalTime = 0;
+        for (ArrayList<Object> video : playlist) {
+            totalTime += (int) video.get(1);
+        }
+        return totalTime;
+    }
+    
+    
     private String formatTime(int totalSeconds) {
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
