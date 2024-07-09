@@ -56,6 +56,7 @@ public class Client{
     //情報をサーバーに送る
     public void sendOperation(BufferedWriter out){
         try{
+        	System.out.println("sendOperationはいってるよ");
             out.write(String.valueOf(this.time) + "\n");
             out.write(this.keyword + "\n");
             out.write(String.valueOf(this.condition) + "\n");
@@ -68,6 +69,11 @@ public class Client{
         }catch(Exception e){
             System.out.println(e.toString());
         }
+    }
+    
+    public boolean checkFlag() {
+    	System.out.println("checkするよ");
+    	return check;
     }
     
 	public static void main(String[] args) {
@@ -91,6 +97,7 @@ public class Client{
 		User user = new User(client);
 		
 		try {
+			System.out.println("接続なう");
 			//ソケットの接続試行。IPa、portは別で指定
 			socket = client.setConnect(client.IP,client.port);
 			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -99,9 +106,13 @@ public class Client{
 			receiver.start();
 
 			while(true){
-				while(!check) ;
-				//サーバー側へユーザープログラムの入力を送信
-				client.sendOperation(out);
+				//System.out.println("ループなう");
+				if(client.checkFlag() == true) {
+					System.out.println("sendOperation呼び出すよ");
+					//サーバー側へユーザープログラムの入力を送信
+					client.sendOperation(out);
+					break;
+				}
 			}
 			
 		}catch(Exception e) {
