@@ -39,8 +39,8 @@ public class Data {
     private static final List<String> SCOPES = Arrays.asList(YouTubeScopes.YOUTUBE);
     private static final String CREDENTIALS_FILE_PATH = "/client_secrets.json";
 
-    public static ArrayList<ArrayList<Object>> processSearchWord(String searchWord) {
-        ArrayList<ArrayList<Object>> allvideo = new ArrayList<>();
+    public static List<List<Object>> processSearchWord(String searchWord) {
+        List<List<Object>> allvideo = new ArrayList<>();
         try {
             YouTube youtubeService = getService();
 
@@ -103,7 +103,7 @@ public class Data {
     	
     	YouTube youtubeService;
     	String playListURL = "https://www.youtube.com/watch?v=-wb2PAx6aEs&list=PLoE8WdcNzsqBXGhZidcrqONRLwfCn2Ybs";
-    	Thread.sleep(2000);
+    	
     	
 		try {
 			youtubeService = getService();
