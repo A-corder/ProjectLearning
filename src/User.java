@@ -48,38 +48,41 @@ public class User {
 	}
 
 	//メッセージをクライアントから受け取る
-			public void fromClient(String msg) {
-				//最初にメッセージを受け取るとき
-				if(count == 0) {
-					if(msg == "サーバーが忙しいです。後でもう一度お試しください。" || msg == "error") {//エラーが発生したら
-						errorFlag = true;
-						Error error = new Error();
-					}else {				//全体のURLを受け取ったら
-						sbURL.append(msg);
-						count++;
-					}
-				}else if(count == 1) {	//2回目にメッセージを受け取る時、つまり、全体の時間を受け取るとき
-					if(msg == "サーバーが忙しいです。後でもう一度お試しください。"|| msg == "error") {//エラーが発生したら
-						Error error = new Error();
-						errorFlag = true;
-					}
-					count++;
-					time = new JLabel(msg);
-					time.setBounds(700, 15, 250, 20);
-				}else {					//3回目以降にメッセージを受け取る時、
-					if(msg == "サーバーが忙しいです。後でもう一度お試しください。"|| msg == "error") {//エラーが発生したら
-						Error error = new Error();
-						errorFlag = true;
-					}else if(msg == "END") { //サーバーから終わりときたら、
-						flag = true; //終わりのフラッグを挙げる
-					}else {
-						sbPlayList.append("・ " + msg+"\n"); //曲を追加していく
-					}
-				}
-			}
+	public void fromClient(String msg) {
+	    System.out.println(msg);
+	    //最初にメッセージを受け取るとき
+	    if (count == 0) {
+	        if (msg.equals("サーバーが忙しいです。後でもう一度お試しください。") || msg.equals("error")) { //エラーが発生したら
+	            errorFlag = true;
+	            Error error = new Error();
+	        } else { //全体のURLを受け取ったら
+	            sbURL.append(msg);
+	            count++;
+	        }
+	    } else if (count == 1) { //2回目にメッセージを受け取る時、つまり、全体の時間を受け取るとき
+	        if (msg.equals("サーバーが忙しいです。後でもう一度お試しください。") || msg.equals("error")) { //エラーが発生したら
+	            Error error = new Error();
+	            errorFlag = true;
+	        }
+	        count++;
+	        time = new JLabel(msg);
+	        time.setBounds(700, 15, 250, 20);
+	    } else { //3回目以降にメッセージを受け取る時、
+	        if (msg.equals("サーバーが忙しいです。後でもう一度お試しください。") || msg.equals("error")) { //エラーが発生したら
+	            Error error = new Error();
+	            errorFlag = true;
+	        } else if (msg.equals("END")) { //サーバーから終わりときたら、
+	            flag = true; //終わりのフラッグを挙げる
+	        } else {
+	            sbPlayList.append("・ " + msg + "\n"); //曲を追加していく
+	        }
+	    }
+	}
+
 	
 	//検索画面結果を表示するためのフラグをチェックする
 	public boolean checkFlag() {
+		System.out.print(flag); System.out.println(count);
 		return flag;
 	}
 	
@@ -490,45 +493,50 @@ public class User {
 			setVisible(true);
 			
 			/*デモ*/
-			fromClient("https:///aaaaaaaaaaa");
-			fromClient("59:52");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-			fromClient("YOASOBI「アイドル」 Official Music Video");
-//			fromClient("error");
-			fromClient("END");
+//			fromClient("https:///aaaaaaaaaaa");
+//			fromClient("59:52");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+//			fromClient("YOASOBI「アイドル」 Official Music Video");
+////		fromClient("error");
+//			fromClient("END");
 				
-			if(checkError()) {
-				Error error = new Error();
-				this.setVisible(false);
-			}else if(checkFlag()) {
-				showPlayList showplaylist = new showPlayList();
-				this.setVisible(false);
+			while(true) {
+				if(checkError()) {
+					Error error = new Error();
+					this.setVisible(false);
+					break;
+				}else if(checkFlag()) {
+					showPlayList showplaylist = new showPlayList();
+					this.setVisible(false);
+					break;
+				}
 			}
+			
 		}
 	}
 	
