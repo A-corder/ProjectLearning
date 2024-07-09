@@ -1,5 +1,10 @@
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 
 public class Client{
     
@@ -10,6 +15,7 @@ public class Client{
     int time;//時間
     String keyword;//検索ワード
     int condition;//最適化条件
+    User user;
     
     static boolean check = false;//メソッド呼び出しタイミング調整用
     
@@ -29,6 +35,7 @@ public class Client{
             return socket;
         }catch(Exception e){
             System.out.println(e.toString());
+            user.fromClient("error");
             return null;
         }
         

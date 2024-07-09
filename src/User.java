@@ -17,10 +17,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 
 
@@ -37,6 +39,7 @@ public class User {
 	private String allTime;//最終画面表示用再生時間
 	private String URL;//最終画面表示用プレイリストURL
 	private boolean flag = false; //検索画面に遷移するかを判断するフラグ
+	private boolean errorFlag = false; //エラー画面に遷移するかを判断するフラグ
 	
 	//画面遷移
 	public User(Client client) {
@@ -49,17 +52,25 @@ public class User {
 				//最初にメッセージを受け取るとき
 				if(count == 0) {
 					if(msg == "error") {//エラーが発生したら
+						errorFlag = true;
 						Error error = new Error();
 					}else {				//全体のURLを受け取ったら
 						sbURL.append(msg);
 						count++;
 					}
 				}else if(count == 1) {	//2回目にメッセージを受け取る時、つまり、全体の時間を受け取るとき
+					if(msg == "error") {//エラーが発生したら
+						Error error = new Error();
+						errorFlag = true;
+					}
 					count++;
 					time = new JLabel(msg);
-					time.setBounds(670, 20, 250, 20);
+					time.setBounds(700, 15, 250, 20);
 				}else {					//3回目以降にメッセージを受け取る時、
-					if(msg == "END") { //サーバーから終わりときたら、
+					if(msg == "error") {//エラーが発生したら
+						Error error = new Error();
+						errorFlag = true;
+					}else if(msg == "END") { //サーバーから終わりときたら、
 						flag = true; //終わりのフラッグを挙げる
 					}else {
 						sbPlayList.append("・ " + msg+"\n"); //曲を追加していく
@@ -70,6 +81,12 @@ public class User {
 	//検索画面結果を表示するためのフラグをチェックする
 	public boolean checkFlag() {
 		return flag;
+	}
+	
+	
+	//エラーが発生したかのフラグをチェックする
+	public boolean checkError() {
+		return errorFlag;
 	}
 	
 	//ゲーム画面の背景を表示するクラス
@@ -469,23 +486,47 @@ public class User {
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 			
-			while(true) {
-				fromClient("https:///aaaaaaaaaaa");
-				fromClient("59:52");
-				fromClient("YOASOBI「アイドル」 Official Music Video");
-				fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
-				fromClient("END");
-				
-				if(checkFlag()) {
-					this.setVisible(false);
-					break;
-				}
-			}
 			
-			showPlayList showplaylist = new showPlayList();
-			setVisible(false);
+			fromClient("https:///aaaaaaaaaaa");
+			fromClient("59:52");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
+			fromClient("YOASOBI「アイドル」 Official Music Video");
+//			fromClient("error");
+//			fromClient("END");
+				
+			if(checkError()) {
+				Error error = new Error();
+				this.setVisible(false);
+			}else if(checkFlag()) {
+				showPlayList showplaylist = new showPlayList();
+				this.setVisible(false);
+			}
 		}
-		
 	}
 	
 	class showPlayList extends JFrame implements ActionListener{
@@ -503,24 +544,25 @@ public class User {
 			setTitle("プレイリスト");//上のタイトル指定
 			setSize(800,600);//画面のサイズ指定
 			
+			setContentPane(new BackgroundPanel("playListCPU.png"));
 			c = getContentPane();//フレームのペインを取得
 			c.setLayout(null);
 			
 			//ラベル配置
 			yourPlayList = new JLabel("あなたのプレイリスト");
-			yourPlayList.setBounds(50, 20, 250, 20);
+			yourPlayList.setBounds(40, 12, 250, 20);
 			c.add(yourPlayList);
 			
 			//全体のプレイリストURL配置
 			playListURL = new JTextArea();
-			playListURL.setBounds(200, 20, 250, 20);
+			playListURL.setBounds(200, 13, 250, 20);
 			playListURL.setEditable(false);
 			playListURL.setText(sbURL.toString());
 			c.add(playListURL);
 			
 			//総再生時間ラベルを配置
 			allViewTime = new JLabel("総再生時間  ");
-			allViewTime.setBounds(600, 20, 250, 20);
+			allViewTime.setBounds(630, 15, 250, 20);
 			c.add(allViewTime);
 			
 			//サーバーから受け取った時間(59:52など)を配置
@@ -530,6 +572,7 @@ public class User {
 		    playListTextArea = new JTextArea();
 	        playListTextArea.setLineWrap(true);
 	        playListTextArea.setWrapStyleWord(true);
+	        playListTextArea.setBounds(40,60,700,400);
 	        playListTextArea.setEditable(false);
 	         
 	        //プレイリストをテキストエリアに表示
@@ -537,8 +580,16 @@ public class User {
 
 	        //スクロールバー
 	        scrollPane = new JScrollPane(playListTextArea);
-	        scrollPane.setBounds(50, 50, 700, 400);
+	        scrollPane.setBounds(50, 60, 700, 400);
 	        c.add(scrollPane);
+	        
+	     // フレームが表示された後にスクロールバーを一番上に設定
+	        SwingUtilities.invokeLater(new Runnable() {
+	            public void run() {
+	                JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+	                verticalScrollBar.setValue(verticalScrollBar.getMinimum());
+	            }
+	        });
 
 			//検索条件を変えるボタン
 			change = new JButton("検索条件を変える",changeIcon);
@@ -562,26 +613,43 @@ public class User {
 			this.setVisible(false);
 		}
 		
-		
-		
 	}
 	
 	//接続失敗時の時に表示する画面
-	class Error extends JFrame{
+	class Error extends JFrame implements ActionListener{
+		private JButton generateButton;//プレイリスト生成のボタン
 		private Container c;//コンテナ
-		private JLabel errorMessage;//エラーテキストラベル
+		private ImageIcon homeIcon = new ImageIcon("gButton.png");
 		
 		Error(){
-			setTitle("プレイリスト");//上のタイトル指定
+			setTitle("エラー発生");//上のタイトル指定
 			setSize(800,600);//画面のサイズ指定
 			
+			setContentPane(new BackgroundPanel("errorAgain.png"));
 			c = getContentPane();//フレームのペインを取得
 			c.setLayout(null);
 			
-			errorMessage = new JLabel("接続に失敗しました");
-			errorMessage.setBounds(600,500,150,50);
+			generateButton = new JButton("ホーム画面へ",homeIcon);
+			generateButton.setFont(new Font("MS Gothic", Font.BOLD, 24));
+			generateButton.setForeground(Color.WHITE);//文字を白に
+			generateButton.setHorizontalTextPosition(SwingConstants.CENTER);//文字を中央に
+			generateButton.setBounds(255,330,250,80);//位置、大きさ設定
+			c.add(generateButton);
+			generateButton.addActionListener(this);
+			
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
+			
+			
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			//カウント、テキストエリアを初期化
+			count = 0;
+			sbPlayList.setLength(0); // StringBuilderをクリア
+		    sbURL.setLength(0); // StringBuilderをクリア
+		    Home home = new Home();
+			this.setVisible(false);
 		}
 	}
 }
