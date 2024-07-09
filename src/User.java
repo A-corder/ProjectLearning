@@ -524,18 +524,27 @@ public class User {
 //			fromClient("YOASOBI「アイドル」 Official Music Video");
 ////		fromClient("error");
 //			fromClient("END");
-				
-			while(true) {
-				if(checkError()) {
-					Error error = new Error();
-					this.setVisible(false);
-					break;
-				}else if(checkFlag()) {
-					showPlayList showplaylist = new showPlayList();
-					this.setVisible(false);
-					break;
-				}
-			}
+			
+			
+			// サーバーの応答を待つスレッドを開始
+            new Thread(() -> {
+                while (true) {
+                    if (checkFlag()) {
+                        this.setVisible(false);
+                        showPlayList showplaylist = new showPlayList();
+                        break;
+                    } else if (checkError()) {
+                        this.setVisible(false);
+                        Error error = new Error();
+                        break;
+                    }
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }).start();
 			
 		}
 	}
