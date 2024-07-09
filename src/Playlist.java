@@ -7,10 +7,10 @@ public class Playlist{
 		//ここから先は他のクラスから取得するデータ
 		
 		int N=100;			//取得する曲数　100固定の予定
-		int maxtime=10800;	//再生リストの時間　0.95倍から1.05倍の間で出来上がる
+		int maxtime=6000;	//再生リストの時間　0.95倍から1.05倍の間で出来上がる
 		int condition=4;	//1:再生回数　2:曲数多い　3:曲数少ない　4:時間ピッタリ
 		
-		setArray list=new setArray(N,(int)((maxtime+1)*1.05));	//コンストラクタ呼びだし
+		setArray list=new setArray(N,(int)((maxtime)*1.026+20));	//コンストラクタ呼びだし
 		
 		list.add("cross a line",325,2881264,"id");
 		list.add("ミセナイクセニ",200,118488,"id");
@@ -114,32 +114,29 @@ public class Playlist{
 		list.add("サクラが降る夜は",292,30627626,"id");		//曲タイトル 時間 再生回数 URL
 		
 		//ここまでが他のクラスから取得するデータ
-		
+		list.resetting(maxtime);
+		N=list.recount();
+		list.rearray(N,(int)((maxtime+1)*1.05));
 		switch(condition) {
 			case 1:
-				list.sort1(maxtime);						//再生回数ソート　完璧
+				list.sort1(maxtime);						//再生回数ソート
 				list.arrayupdate(maxtime, N, condition);
 				break;
 			case 2:
-				list.sort2(maxtime);						//曲数多いソート　おおむねいい挙動
+				list.sort2(maxtime);						//曲数多いソート
 				list.arrayupdate(maxtime, N, condition);
 				break;
 			case 3:
-				/*
-				list.rearray(N,(int)((list.sumtime()-maxtime)*1.05));	//曲数少ないソート　補集合を曲数多いソートで取ってる
-				list.sort3((int)((list.sumtime()-maxtime)*1.05));
-				list.arrayupdate(list.sumtime()-maxtime, N, condition);
-				*/
-				list.sort3(maxtime);
+				list.sort3(maxtime);						//曲数少ないソート
 				list.arrayupdate(maxtime, N, condition);
 				break;
 			case 4:
-				list.sort4(maxtime);						//時間ピッタリソート　おおむねいい挙動
+				list.sort4(maxtime);						//時間ピッタリソート
 				list.arrayupdate(maxtime, N, condition);
 				break;
 		}
 		list.delete();			//不必要な曲を削除
-		list.print(maxtime,N);	//出力
+		list.print();	//出力
 	}
 }
 
@@ -166,20 +163,26 @@ class setArray{
 		Arraylist.add(array); 
 	}
 	
-	public int sumtime() {		//100曲の総再生時間を計算
+	public void resetting(int maxtime) {
+		int i;
+		for(i=maxarray.length-1;i>=0;i=i-1){
+			if((int)Arraylist.get(i).get(1)>maxtime) {
+				Arraylist.remove(i);
+			}
+		}
+	}
+	
+	public int recount() {
 		int ret=0;
-		for (ArrayList<Object> obj : Arraylist){
-			 ret=ret+(int)obj.get(1);
-	     }
+		for (Object obj : Arraylist){
+			ret=ret+1;
+		}
 		return ret;
 	}
 	
-	public void rearray(int n,int m) {	//曲数少ないソート用の再設定など
-		array=new long[n][m][3];
-		int i;
-		for(i=0;i<maxarray.length;i=i+1) {
-			maxarray[i]=1;
-		}
+	public void rearray(int N,int time) {
+		array=new long[N][time][3];
+		maxarray=new int[N];
 	}
 	
 	public void sort1(int maxtime) {	//再生回数ソート　中身の説明は略
@@ -363,6 +366,14 @@ class setArray{
 		}
 	}
 	
+	public int sumtime() {		//100曲の総再生時間を計算
+		int ret=0;
+		for (ArrayList<Object> obj : Arraylist){
+			 ret=ret+(int)obj.get(1);
+	     }
+		return ret;
+	}
+	
 	public int gettime(int i) {
 		return (int)Arraylist.get(i).get(1);	//i曲目の時間を返す
 	}
@@ -497,13 +508,13 @@ class setArray{
 		}
 	}
 	
-	public void print(int maxtime,int N) {	//結果の出力
+	public void print() {	//結果の出力
 
 		for (Object obj : Arraylist){
 			System.out.println(obj);
 		}
 		System.out.println();
-		
+		/*
 		int time=0,count=0;
 		for (ArrayList<Object> obj: Arraylist){
 			time=time+(Integer)obj.get(1);
@@ -511,12 +522,13 @@ class setArray{
 	    }
 		System.out.println("総時間："+time);
 		System.out.println("評価値："+count);
+		*/
 	}
 	
 	public void delete() {					//いらない曲の消去
 		int i;
 		for(i=maxarray.length-1;i>=0;i=i-1){
-			//Arraylist.get(i).remove(2);
+			Arraylist.get(i).remove(2);
 			if(maxarray[i]==0) {
 				Arraylist.remove(i);
 			}
@@ -652,6 +664,7 @@ class setArray{
 		for(a=(int)(array.length*0.9);a<array.length;a=a+1) {
 			for(b=(int)(array[0].length*0.9);b<array[0].length;b=b+1) {
 				System.out.printf("%5d",array[a][b][1]-array[a][b][2]);
+			
 			}
 			System.out.println();
 		}
