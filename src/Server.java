@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class Server {
@@ -70,7 +71,7 @@ class ServerThread extends Thread {
             System.out.println("検索ワード: " + searchWord);
             System.out.println("最適化条件: " + optimizationCondition);
             
-            /*// Dataクラスのメソッドを呼び出して、検索結果を取得する
+            // Dataクラスのメソッドを呼び出して、検索結果を取得する
             List<List<Object>> videoData = Data.processSearchWord(searchWord);
             
             // Playlistクラスのメソッドを呼び出して、ソートされたデータを取得する
@@ -79,38 +80,20 @@ class ServerThread extends Thread {
             // プレイリスト総時間を計算
             int totalTime = calculateTotalTime(sortedData);
             
+            // 合計時間を分:秒に変換
+            String totalTimeFormatted = formatTime(totalTime);
+            
             // プレイリストURLを取得
             String playlistUrl = Data.getPlaylistURL(sortedData);
-            System.out.println("プレイリストのURL: " + playlistUrl);*/
-
-
-            // プレイリストデータを生成する（デモ用）
-            String url = "http://example.com/playlist";
-            int Sumtime = 3600; // 例として合計時間を秒で設定
-            String[] songTitles = {"Song 1", "Song 2", "Song 3"};
-            String[] songUrls = {"http://example.com/song1", "http://example.com/song2", "http://example.com/song3"};
-            
-            // 合計時間を分:秒に変換
-            String totalTimeFormatted = formatTime(Sumtime);
-
+            System.out.println("プレイリストのURL: " + playlistUrl);
 
             // プレイリストデータをクライアントに送信する
-            writer.write(url);
+            writer.write(playlistUrl);
             writer.newLine();
             writer.write(totalTimeFormatted);
             writer.newLine();
-            for (int i = 0; i < songTitles.length; i++) {
-                writer.write(songTitles[i]);
-                writer.newLine();
-                writer.write(songUrls[i]);
-                writer.newLine();
-            }
-            
-            writer.write("END");
-            writer.newLine();
-            
             // ソートされたデータをクライアントに送信する
-            /*for (ArrayList<Object> video : sortedData) {
+            for (ArrayList<Object> video : sortedData) {
                 writer.write("Title: " + video.get(0));
                 writer.newLine();
                 writer.write("Duration: " + formatTime((int) video.get(1)));
@@ -119,7 +102,7 @@ class ServerThread extends Thread {
                 writer.newLine();
                 writer.write("Video URL: https://www.youtube.com/watch?v=" + video.get(3));
                 writer.newLine();
-            }*/
+            }
 
             writer.flush();
 
@@ -129,6 +112,10 @@ class ServerThread extends Thread {
             socket.close();
         } catch (IOException ex) {
             ex.printStackTrace();
+        } catch (InterruptedException ex) {
+            System.out.println("スレッドが中断されました");
+            ex.printStackTrace();
+            Thread.currentThread().interrupt(); // スレッドの中断ステータスを再設定
         } finally {
             semaphore.release();
         }
@@ -141,7 +128,6 @@ class ServerThread extends Thread {
         }
         return totalTime;
     }
-    
     
     private String formatTime(int totalSeconds) {
         int minutes = totalSeconds / 60;
