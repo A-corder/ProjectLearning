@@ -54,14 +54,12 @@ public class User {
 	    if (count == 0) {
 	        if (msg.equals("サーバーが忙しいです。後でもう一度お試しください。") || msg.equals("error")) { //エラーが発生したら
 	            errorFlag = true;
-	            Error error = new Error();
 	        } else { //全体のURLを受け取ったら
 	            sbURL.append(msg);
 	            count++;
 	        }
 	    } else if (count == 1) { //2回目にメッセージを受け取る時、つまり、全体の時間を受け取るとき
 	        if (msg.equals("サーバーが忙しいです。後でもう一度お試しください。") || msg.equals("error")) { //エラーが発生したら
-	            Error error = new Error();
 	            errorFlag = true;
 	        }
 	        count++;
@@ -69,7 +67,6 @@ public class User {
 	        time.setBounds(700, 15, 250, 20);
 	    } else { //3回目以降にメッセージを受け取る時、
 	        if (msg.equals("サーバーが忙しいです。後でもう一度お試しください。") || msg.equals("error")) { //エラーが発生したら
-	            Error error = new Error();
 	            errorFlag = true;
 	        } else if (msg.equals("END")) { //サーバーから終わりときたら、
 	            flag = true; //終わりのフラッグを挙げる
@@ -658,6 +655,7 @@ public class User {
 			c.add(generateButton);
 			generateButton.addActionListener(this);
 			
+			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 			
@@ -669,6 +667,8 @@ public class User {
 			count = 0;
 			sbPlayList.setLength(0); // StringBuilderをクリア
 		    sbURL.setLength(0); // StringBuilderをクリア
+		    flag = false;
+		    errorFlag =false; 
 		    Home home = new Home();
 			this.setVisible(false);
 		}
