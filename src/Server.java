@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class Server {
@@ -71,7 +70,7 @@ class ServerThread extends Thread {
             System.out.println("検索ワード: " + searchWord);
             System.out.println("最適化条件: " + optimizationCondition);
             
-            // Dataクラスのメソッドを呼び出して、検索結果を取得する
+            /*// Dataクラスのメソッドを呼び出して、検索結果を取得する
             List<List<Object>> videoData = Data.processSearchWord(searchWord);
             
             // Playlistクラスのメソッドを呼び出して、ソートされたデータを取得する
@@ -82,7 +81,7 @@ class ServerThread extends Thread {
             
             // プレイリストURLを取得
             String playlistUrl = Data.getPlaylistURL(sortedData);
-            System.out.println("プレイリストのURL: " + playlistUrl);
+            System.out.println("プレイリストのURL: " + playlistUrl);*/
 
 
             // プレイリストデータを生成する（デモ用）
