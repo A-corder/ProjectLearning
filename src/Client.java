@@ -56,19 +56,18 @@ public class Client{
     //情報をサーバーに送る
     public void sendOperation(BufferedWriter out){
         try{
-        	out.write(this.time);
-        	out.write(this.keyword);
-        	out.write(this.condition);
-        	check = false;//呼び出しフラグを折る
-		out.flush();
-		
-		System.out.println("時間送信:"+this.time);
-    		System.out.println("検索ワード送信:"+this.keyword);
-    		System.out.println("最適化条件送信:"+this.condition);
+            out.write(String.valueOf(this.time) + "\n");
+            out.write(this.keyword + "\n");
+            out.write(String.valueOf(this.condition) + "\n");
+            check = false;//呼び出しフラグを折る
+            out.flush();
+
+            System.out.println("時間送信:" + this.time);
+            System.out.println("検索ワード送信:" + this.keyword);
+            System.out.println("最適化条件送信:" + this.condition);
         }catch(Exception e){
             System.out.println(e.toString());
         }
-        
     }
     
 	public static void main(String[] args) {
