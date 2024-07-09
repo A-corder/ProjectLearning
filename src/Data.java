@@ -23,8 +23,11 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
 import com.google.api.services.youtube.model.Playlist;
+import com.google.api.services.youtube.model.PlaylistItem;
+import com.google.api.services.youtube.model.PlaylistItemSnippet;
 import com.google.api.services.youtube.model.PlaylistSnippet;
 import com.google.api.services.youtube.model.PlaylistStatus;
+import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
@@ -59,12 +62,6 @@ public class Data {
             VideoListResponse videoResponse = videosRequest.execute();
             List<Video> videoList = videoResponse.getItems();
             
-            // プレイリストを作成
-            String playlistId = createPlaylist(youtubeService, "New Playlist", "A playlist created using the YouTube Data API");
-            System.out.println("Created Playlist ID: " + playlistId);
-            String playListURL = "Playlist URL: https://www.youtube.com/playlist?list=" + playlistId;
-            System.out.println(playListURL);
-            
 
             // 動画の詳細情報を保存
             for (Video video : videoList) {
@@ -80,6 +77,7 @@ public class Data {
 
                 // 型を変換
                 int counts = viewCount.intValue();
+                
 
                 // Listに入れ込む
                 videoData.add(title);
@@ -96,6 +94,38 @@ public class Data {
             e.printStackTrace();
         }
         return allvideo;
+    }
+    
+    public static String getPlaylistURL(List<List<Object>> sortedData) {
+    	
+    	YouTube youtubeService;
+    	String playListURL = null;
+    	
+		try {
+			youtubeService = getService();
+			
+		// プレイリストを作成
+	        String playlistId = createPlaylist(youtubeService, "New Playlist", "A playlist created using the YouTube Data API");
+	        System.out.println("Created Playlist ID: " + playlistId);
+	        playListURL = "Playlist URL: https://www.youtube.com/playlist?list=" + playlistId;
+	        System.out.println(playListURL);
+	        
+	        // プレイリストに動画を入れ込む
+	        for (List<Object> video :sortedData) {
+	        	String videoId = String.valueOf(video.get(3));
+	        	addVideoToPlaylist(youtubeService, playlistId, videoId);
+	        }
+	        
+	        
+		} catch (GeneralSecurityException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+    	
+    	return playListURL;
     }
 
     private static YouTube getService() throws GeneralSecurityException, IOException {
@@ -147,9 +177,29 @@ public class Data {
         Playlist playlistInserted = playlistInsertCommand.execute();
         return playlistInserted.getId();
     }
+    
+    private static void addVideoToPlaylist(YouTube youtubeService, String playlistId, String videoId) throws IOException {
+        ResourceId resourceId = new ResourceId();
+        resourceId.setKind("youtube#video");
+        resourceId.setVideoId(videoId);
+
+        PlaylistItemSnippet playlistItemSnippet = new PlaylistItemSnippet();
+        playlistItemSnippet.setPlaylistId(playlistId);
+        playlistItemSnippet.setResourceId(resourceId);
+
+        PlaylistItem playlistItem = new PlaylistItem();
+        playlistItem.setSnippet(playlistItemSnippet);
+
+        YouTube.PlaylistItems.Insert request = youtubeService.playlistItems()
+                .insert("snippet", playlistItem);
+        PlaylistItem response = request.execute();
+        System.out.println("Added video to playlist: " + response.getSnippet().getTitle());
+    }
 
     public static void main(String[] args) {
-        List<List<Object>> videoData = processSearchWord("test");
+        List<List<Object>> videoData = processSearchWord("米津玄師");
+        String playListURL = getPlaylistURL(videoData);
+        System.out.println("Playlist URL: " + playListURL);
         for (List<Object> video : videoData) {
             System.out.println("Title: " + video.get(0));
             System.out.println("Duration: " + video.get(1) + " seconds");
