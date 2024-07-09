@@ -142,6 +142,7 @@ public class User {
 			c.add(generateButton);
 			generateButton.addActionListener(this);
 			
+			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 		}
@@ -269,7 +270,7 @@ public class User {
 			c.add(next);
 			next.addActionListener(this);
 			
-			
+			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 		}
@@ -416,6 +417,7 @@ public class User {
 			c.add(generate);
 			generate.addActionListener(this);
 			
+			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 		}
@@ -483,10 +485,11 @@ public class User {
 			
 			client.fromUser(viewTime, searchWord,condition);
 			
+			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 			
-			
+			/*デモ*/
 			fromClient("https:///aaaaaaaaaaa");
 			fromClient("59:52");
 			fromClient("YOASOBI「アイドル」 Official Music Video");
@@ -517,7 +520,7 @@ public class User {
 			fromClient("https://www.youtube.com/watch?v=ZRtdQ81jPUQ");
 			fromClient("YOASOBI「アイドル」 Official Music Video");
 //			fromClient("error");
-//			fromClient("END");
+			fromClient("END");
 				
 			if(checkError()) {
 				Error error = new Error();
@@ -600,6 +603,7 @@ public class User {
 			c.add(change);
 			change.addActionListener(this);
 			
+			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 		}
