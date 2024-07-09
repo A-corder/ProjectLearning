@@ -23,31 +23,32 @@ public class Playlist{
 		switch(optimizationCondition) {
 			case 1:
 				list.sort1(maxtime);						//再生回数ソート
-				list.arrayupdate(maxtime, N, optimizationCondition);
+				list.arrayupdate(maxtime,N,optimizationCondition);
 				break;
 			case 2:
 				list.sort2(maxtime);						//曲数多いソート
-				list.arrayupdate(maxtime, N, optimizationCondition);
+				list.arrayupdate(maxtime,N,optimizationCondition);
 				break;
 			case 3:
 				list.sort3(maxtime);						//曲数少ないソート
-				list.arrayupdate(maxtime, N, optimizationCondition);
+				list.arrayupdate(maxtime,N,optimizationCondition);
 				break;
 			case 4:
 				list.sort4(maxtime);						//時間ピッタリソート
-				list.arrayupdate(maxtime, N, optimizationCondition);
+				list.arrayupdate(maxtime,N,optimizationCondition);
 				break;
 		}
 		list.delete();			//不必要な曲を削除
 		list.print();	//出力
-        return setArray.Arraylist;
+        return list.Arraylist;
     }
+
 }
 
 
 class setArray{
 	
-	static ArrayList<ArrayList<Object>> Arraylist = new ArrayList<ArrayList<Object>>();	//100曲を保存するArraList<ArrayList<Object>>
+	ArrayList<ArrayList<Object>> Arraylist = new ArrayList<ArrayList<Object>>();	//100曲を保存するArraList<ArrayList<Object>>
 	long[][][] array;			//動的計画法に必要な表(3次元)
 	int[] maxarray={0};			//解を保存する配列
 	

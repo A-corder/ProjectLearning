@@ -144,10 +144,14 @@ class Receiver extends Thread {
     
     // 内部クラス Receiverのメソッド
     public void run() {
+    	int count = 0;
         try {
             while (true) { // データを受信し続ける
+            	System.out.println("受信開始"+count);
                 String inputLine = br.readLine(); // 受信データを一行分読み込む
                 if (inputLine != null) { // データを受信したら
+                	System.out.println("fromClient呼び出し");
+                	count++;
                     this.user.fromClient(inputLine); // ユーザークラスに書き込む
                 }
             }
