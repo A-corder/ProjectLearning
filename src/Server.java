@@ -94,15 +94,14 @@ class ServerThread extends Thread {
             writer.newLine();
             // ソートされたデータをクライアントに送信する
             for (ArrayList<Object> video : sortedData) {
-                writer.write("Title: " + video.get(0));
+                writer.write("タイトル: " + video.get(0));
                 writer.newLine();
-                writer.write("Duration: " + formatTime((int) video.get(1)));
-                writer.newLine();
-                writer.write("View Count: " + video.get(2));
-                writer.newLine();
-                writer.write("Video URL: https://www.youtube.com/watch?v=" + video.get(3));
+                writer.write("URL: https://www.youtube.com/watch?v=" + video.get(3));
                 writer.newLine();
             }
+            
+            writer.write("END");
+            writer.newLine();
 
             writer.flush();
 
