@@ -17,6 +17,7 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
@@ -38,8 +39,8 @@ public class Data {
     private static final List<String> SCOPES = Arrays.asList(YouTubeScopes.YOUTUBE);
     private static final String CREDENTIALS_FILE_PATH = "/client_secrets.json";
 
-    public static List<List<Object>> processSearchWord(String searchWord) {
-        List<List<Object>> allvideo = new ArrayList<>();
+    public static ArrayList<ArrayList<Object>> processSearchWord(String searchWord) {
+        ArrayList<ArrayList<Object>> allvideo = new ArrayList<>();
         try {
             YouTube youtubeService = getService();
 
@@ -60,12 +61,12 @@ public class Data {
                     .list("snippet,contentDetails,statistics")
                     .setId(String.join(",", videoIds));
             VideoListResponse videoResponse = videosRequest.execute();
-            List<Video> videoList = videoResponse.getItems();
+            ArrayList<Video> videoList = (ArrayList<Video>) videoResponse.getItems();
             
 
             // 動画の詳細情報を保存
             for (Video video : videoList) {
-                List<Object> videoData = new ArrayList<>();
+                ArrayList<Object> videoData = new ArrayList<>();
                 String title = video.getSnippet().getTitle();
                 String duration = video.getContentDetails().getDuration();
                 BigInteger viewCount = video.getStatistics().getViewCount();
@@ -87,6 +88,8 @@ public class Data {
                 
                 allvideo.add(videoData);
                 
+                System.out.println(videoData);
+                
                 
             }
 
@@ -96,15 +99,16 @@ public class Data {
         return allvideo;
     }
     
-    public static String getPlaylistURL(List<List<Object>> sortedData) {
+    public static String getPlaylistURL(ArrayList<ArrayList<Object>> sortedData) throws InterruptedException {
     	
     	YouTube youtubeService;
-    	String playListURL = null;
+    	String playListURL = "https://www.youtube.com/watch?v=-wb2PAx6aEs&list=PLoE8WdcNzsqBXGhZidcrqONRLwfCn2Ybs";
+    	Thread.sleep(2000);
     	
 		try {
 			youtubeService = getService();
 			
-		// プレイリストを作成
+			// プレイリストを作成
 	        String playlistId = createPlaylist(youtubeService, "New Playlist", "A playlist created using the YouTube Data API");
 	        System.out.println("Created Playlist ID: " + playlistId);
 	        playListURL = "Playlist URL: https://www.youtube.com/playlist?list=" + playlistId;
@@ -192,12 +196,39 @@ public class Data {
 
         YouTube.PlaylistItems.Insert request = youtubeService.playlistItems()
                 .insert("snippet", playlistItem);
-        PlaylistItem response = request.execute();
-        System.out.println("Added video to playlist: " + response.getSnippet().getTitle());
+
+        int maxRetries = 5;
+        int attempt = 0;
+        boolean success = false;
+
+        while (attempt < maxRetries && !success) {
+            try {
+                PlaylistItem response = request.execute();
+                System.out.println("Added video to playlist: " + response.getSnippet().getTitle());
+                success = true;
+            } catch (GoogleJsonResponseException e) {
+                if (e.getStatusCode() == 409) {
+                    System.out.println("Conflict error, retrying...");
+                    attempt++;
+                    try {
+                        Thread.sleep(1000 * attempt); // 再試行前に待機する（指数バックオフ）
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                } else {
+                    throw e;
+                }
+            }
+        }
+
+        if (!success) {
+            throw new IOException("Failed to add video to playlist after " + maxRetries + " attempts");
+        }
     }
 
-    public static void main(String[] args) {
-        List<List<Object>> videoData = processSearchWord("米津玄師");
+
+    public static void main(String[] args) throws InterruptedException {
+        ArrayList<ArrayList<Object>> videoData = processSearchWord("米津玄師");
         String playListURL = getPlaylistURL(videoData);
         System.out.println("Playlist URL: " + playListURL);
         for (List<Object> video : videoData) {
