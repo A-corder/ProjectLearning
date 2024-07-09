@@ -60,6 +60,9 @@ public class Client{
         	out.write(this.keyword);
         	out.write(this.condition);
         	check = false;//呼び出しフラグを折る
+		System.out.println("時間送信:"+this.time);
+    		System.out.println("検索ワード送信:"+this.keyword);
+    		System.out.println("最適化条件送信:"+this.condition);
         }catch(Exception e){
             System.out.println(e.toString());
         }
