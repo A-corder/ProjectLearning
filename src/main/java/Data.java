@@ -23,7 +23,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
-import com.google.api.services.youtube.model.Playlist;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemSnippet;
 import com.google.api.services.youtube.model.PlaylistSnippet;
@@ -228,7 +227,7 @@ public class Data {
 
 
     public static void main(String[] args) throws InterruptedException {
-        ArrayList<ArrayList<Object>> videoData = processSearchWord("米津玄師");
+        List<List<Object>> videoData = processSearchWord("米津玄師");
         String playListURL = getPlaylistURL(videoData);
         System.out.println("Playlist URL: " + playListURL);
         for (List<Object> video : videoData) {
