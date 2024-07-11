@@ -1,6 +1,7 @@
 package com.example.youtubeapi;
 
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -137,23 +138,19 @@ public class Data {
     }
 
     private static Credential authorize() throws IOException {
+        // リソースストリームを取得するためのパスを確認
         InputStream in = Data.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        if (in == null) {
+            throw new FileNotFoundException("Resource見つからんよ～: " + CREDENTIALS_FILE_PATH);
+        }
+        
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-        GoogleAuthorizationCodeFlow flow = null;
-		try {
-			flow = new GoogleAuthorizationCodeFlow.Builder(
-			        GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, clientSecrets, SCOPES)
-			        .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("tokens")))
-			        .setAccessType("offline")
-			        .build();
-		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-		} catch (GeneralSecurityException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-		}
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+            GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, clientSecrets, SCOPES)
+            .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("tokens")))
+            .setAccessType("offline")
+            .build();
 
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
