@@ -100,37 +100,31 @@ public class Data {
     }
     
     public static String getPlaylistURL(ArrayList<ArrayList<Object>> sortedData) throws InterruptedException {
-    	
-    	YouTube youtubeService;
-    	String playListURL = "https://www.youtube.com/watch?v=-wb2PAx6aEs&list=PLoE8WdcNzsqBXGhZidcrqONRLwfCn2Ybs";
-    	
-    	
-		try {
-			youtubeService = getService();
-			
-			// プレイリストを作成
-	        String playlistId = createPlaylist(youtubeService, "New Playlist", "A playlist created using the YouTube Data API");
-	        System.out.println("Created Playlist ID: " + playlistId);
-	        playListURL = "Playlist URL: https://www.youtube.com/playlist?list=" + playlistId;
-	        System.out.println(playListURL);
-	        
-	        // プレイリストに動画を入れ込む
-	        for (List<Object> video :sortedData) {
-	        	String videoId = String.valueOf(video.get(3));
-	        	addVideoToPlaylist(youtubeService, playlistId, videoId);
-	        }
-	        
-	        
-		} catch (GeneralSecurityException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-		}
-    	
-    	return playListURL;
+    YouTube youtubeService;
+    String playListURL = "https://www.youtube.com/watch?v=-wb2PAx6aEs&list=PLoE8WdcNzsqBXGhZidcrqONRLwfCn2Ybs";
+    
+    try {
+        youtubeService = getService();
+        
+        // プレイリストを作成
+        Playlist youTubePlaylist = createPlaylist(youtubeService, "New Playlist", "A playlist created using the YouTube Data API");
+        String playlistId = youTubePlaylist.getId();
+        System.out.println("Created Playlist ID: " + playlistId);
+        playListURL = "Playlist URL: https://www.youtube.com/playlist?list=" + playlistId;
+        System.out.println(playListURL);
+        
+        // プレイリストに動画を入れ込む
+        for (List<Object> video : sortedData) {
+            String videoId = String.valueOf(video.get(3));
+            addVideoToPlaylist(youtubeService, playlistId, videoId);
+        }
+        
+    } catch (GeneralSecurityException | IOException e) {
+        e.printStackTrace();
     }
+    
+    return playListURL;
+}
 
     private static YouTube getService() throws GeneralSecurityException, IOException {
         Credential credential = authorize();
@@ -165,22 +159,22 @@ public class Data {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    private static String createPlaylist(YouTube youtubeService, String title, String description) throws IOException {
-        PlaylistSnippet playlistSnippet = new PlaylistSnippet();
-        playlistSnippet.setTitle(title);
-        playlistSnippet.setDescription(description);
+    private static Playlist createPlaylist(YouTube youtubeService, String title, String description) throws IOException {
+    PlaylistSnippet playlistSnippet = new PlaylistSnippet();
+    playlistSnippet.setTitle(title);
+    playlistSnippet.setDescription(description);
 
-        PlaylistStatus playlistStatus = new PlaylistStatus();
-        playlistStatus.setPrivacyStatus("public");
+    PlaylistStatus playlistStatus = new PlaylistStatus();
+    playlistStatus.setPrivacyStatus("public");
 
-        Playlist youTubePlaylist = new Playlist();
-        youTubePlaylist.setSnippet(playlistSnippet);
-        youTubePlaylist.setStatus(playlistStatus);
+    Playlist youTubePlaylist = new Playlist();
+    youTubePlaylist.setSnippet(playlistSnippet);
+    youTubePlaylist.setStatus(playlistStatus);
 
-        YouTube.Playlists.Insert playlistInsertCommand = youtubeService.playlists().insert("snippet,status", youTubePlaylist);
-        Playlist playlistInserted = playlistInsertCommand.execute();
-        return playlistInserted.getId();
-    }
+    YouTube.Playlists.Insert playlistInsertCommand = youtubeService.playlists().insert("snippet,status", youTubePlaylist);
+    Playlist playlistInserted = playlistInsertCommand.execute();
+    return playlistInserted;
+}
     
     private static void addVideoToPlaylist(YouTube youtubeService, String playlistId, String videoId) throws IOException {
         ResourceId resourceId = new ResourceId();
@@ -227,8 +221,8 @@ public class Data {
     }
 
 
-    public static void main(String[] args) throws InterruptedException {
-        List<List<Object>> videoData = processSearchWord("米津玄師");
+    /*public static void main(String[] args) throws InterruptedException {
+        ArrayList<ArrayList<Object>> videoData = processSearchWord("米津玄師");
         String playListURL = getPlaylistURL(videoData);
         System.out.println("Playlist URL: " + playListURL);
         for (List<Object> video : videoData) {
@@ -238,6 +232,5 @@ public class Data {
             System.out.println("Video ID: " + video.get(3));
             System.out.println();
         }
-    }
+    }*/
 }
-
