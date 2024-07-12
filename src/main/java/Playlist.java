@@ -1,5 +1,3 @@
-package com.example.youtubeapi;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -215,6 +213,9 @@ class setArray{
 					array[i][j][0]=100;
 					array[i][j][1]=-1;
 					array[i][j][2]=-1;
+					if(j==0) {
+						array[i][j][0]=0;
+					}
 				}else {
 					array[i][j][0]=array[i-1][j][0];
 					array[i][j][1]=j;
@@ -250,7 +251,7 @@ class setArray{
 					array[i][j][0]=100;
 					array[i][j][1]=-1;
 					array[i][j][2]=-1;
-				}else if(array[i-1][j-gettime(i)][0]!=0&&array[i-1][j][0]!=0){
+				}else if(array[i-1][j-gettime(i)][0]!=100&&array[i-1][j][0]!=100){
 					if(array[i-1][j-gettime(i)][0]+1<array[i-1][j][0]) {
 						array[i][j][0]=array[i-1][j-gettime(i)][0]+1;
 						array[i][j][1]=j-gettime(i);
@@ -266,11 +267,11 @@ class setArray{
 						array[i][j][1]=j;
 						array[i][j][2]=j;
 					}
-				}else if(array[i-1][j-gettime(i)][0]!=0){
+				}else if(array[i-1][j-gettime(i)][0]!=100){
 					array[i][j][0]=array[i-1][j-gettime(i)][0]+1;
 					array[i][j][1]=j-gettime(i);
 					array[i][j][2]=j-gettime(i);
-				}else if(array[i-1][j][0]!=0) {
+				}else if(array[i-1][j][0]!=100) {
 					array[i][j][0]=array[i-1][j][0];
 					array[i][j][1]=j;
 					array[i][j][2]=j;
@@ -359,6 +360,14 @@ class setArray{
 		}
 	}
 	
+	public int sumtime() {		//100曲の総再生時間を計算
+		int ret=0;
+		for (ArrayList<Object> obj : Arraylist){
+			 ret=ret+(int)obj.get(1);
+	    }
+		return ret;
+	}
+	
 	public int gettime(int i) {
 		return (int)Arraylist.get(i).get(1);	//i曲目の時間を返す
 	}
@@ -366,7 +375,106 @@ class setArray{
 	public int getcount(int i) {
 		return (int)Arraylist.get(i).get(2);	//i曲目の再生回数を返す
 	}
-
+	
+	public int searchtime(int i,int j,int sum,int maxtime) {	
+		
+		if(i==0){
+			if(array[i][j][0]==0){
+				return sum;
+			}else {
+				return sum+gettime(i);
+			}
+		}else {
+			if(array[i][j][1]==array[i][j][2]) {
+				if(array[i][j][1]==j) {
+					return searchtime(i-1,(int)array[i][j][1],sum,maxtime);
+				}
+				else {
+					return searchtime(i-1,(int)array[i][j][1],sum+gettime(i),maxtime);
+				}
+			}
+			else{
+				if(Math.abs(searchtime(i-1,(int)array[i][j][1],sum+gettime(i),maxtime)-maxtime)>Math.abs(searchtime(i-1,(int)array[i][j][2],sum,maxtime)-maxtime)) {
+					return searchtime(i-1,(int)array[i][j][2],sum,maxtime);
+				}
+				else{
+					return searchtime(i-1,(int)array[i][j][1],sum+gettime(i),maxtime);
+				}
+				
+			}
+		}
+	}
+	
+	public int filltime(int i,int j,int sum,int maxtime) {	
+		
+		if(i==0){
+			if(array[i][j][0]==0) {
+				return sum;
+			}else {
+				return sum+gettime(i);
+			}
+		}else {
+			if(array[i][j][1]==array[i][j][2]) {
+				if(array[i][j][1]==j) {
+					return filltime(i-1,(int)array[i][j][1],sum,maxtime);
+				}
+				else {
+					return filltime(i-1,(int)array[i][j][1],sum+gettime(i),maxtime);
+				}
+			}
+			else{
+				if(Math.abs(filltime(i-1,(int)array[i][j][1],sum+gettime(i),maxtime)-maxtime)>Math.abs(filltime(i-1,(int)array[i][j][2],sum,maxtime)-maxtime)) {
+					array[i][j][1]=array[i][j][2];
+					return filltime(i-1,(int)array[i][j][2],sum,maxtime);
+				}
+				else{
+					array[i][j][2]=array[i][j][1];
+					return filltime(i-1,(int)array[i][j][1],sum+gettime(i),maxtime);
+				}
+				
+			}
+		}
+	}
+	
+	public long searchcount(int i,int j,int sum,int maxtime) {	
+		long left,right;
+		if(i==0){
+			System.out.println("ROOT");
+			if(array[i][j][0]==0) {
+				return sum;
+			}else {
+				return sum+getcount(i);
+			}
+		}else {
+			if(array[i][j][1]==array[i][j][2]) {
+				if(array[i][j][1]==j) {
+					return searchcount(i-1,(int)array[i][j][1],sum,maxtime);
+				}
+				else {
+					return searchcount(i-1,(int)array[i][j][1],sum+getcount(i),maxtime);
+				}
+			}
+			else{
+				left=fillcount(i-1,(int)array[i][j][1],sum+getcount(i),maxtime);
+				right=fillcount(i-1,(int)array[i][j][2],sum,maxtime);
+				System.out.println(i+" BRANCH "+left+" "+right);
+				System.out.println("LEFT :"+(i-1)+" "+array[i][j][1]+" "+sum+getcount(i));
+				System.out.println("RIGHT:"+(i-1)+" "+array[i][j][2]+" "+sum);
+				if(left<right) {
+					System.out.println("RIGHT");
+					System.out.println();
+					return searchcount(i-1,(int)array[i][j][2],sum,maxtime);
+				}
+				else{
+					System.out.println("LEFT");
+					System.out.println();
+					return searchcount(i-1,(int)array[i][j][1],sum+getcount(i),maxtime);
+				}
+				
+			}
+		}
+	}
+	
 	public long fillcount(int i,int j,int sum,int maxtime) {
 		long left,right;
 		if(i==0){
@@ -432,8 +540,12 @@ class setArray{
 				j=(int)((maxtime+1)*1.026+20)-1;	
 				while(trace!=-1) {
 					trace=(int)array[i][j][1];
-					if(j!=trace&&(trace!=-1||array[0][j][0]!=0)){
-						maxarray[i]=1;
+					if(j!=trace){
+						if(i!=0){
+							maxarray[i]=1;
+						}else if(array[i][j][0]!=0){
+							maxarray[i]=1;
+						}
 					}
 					j=trace;
 					i=i-1;
@@ -462,8 +574,13 @@ class setArray{
 				fillcount(i,j,0,maxtime);
 				while(trace!=-1) {
 					trace=(int)array[i][j][1];
-					if(j!=trace&&(trace!=-1||array[0][j][0]!=0)){
-						maxarray[i]=1;
+					trace=(int)array[i][j][1];
+					if(j!=trace){
+						if(i!=0){
+							maxarray[i]=1;
+						}else if(array[i][j][0]!=0){
+							maxarray[i]=1;
+						}
 					}
 					j=trace;
 					i=i-1;
@@ -492,8 +609,12 @@ class setArray{
 				fillcount(i,j,0,maxtime);
 				while(trace!=-1) {
 					trace=(int)array[i][j][1];
-					if(j!=trace&&(trace!=-1||array[0][j][0]!=0)){
-						maxarray[i]=1;
+					if(j!=trace){
+						if(i!=0){
+							maxarray[i]=1;
+						}else if(j!=0&&array[i][j][0]!=100||j==0&&array[i][j][0]!=0){
+							maxarray[i]=1;
+						}
 					}
 					j=trace;
 					i=i-1;
@@ -505,8 +626,12 @@ class setArray{
 				fillcount(i,j,0,maxtime);
 				while(trace!=-1) {
 					trace=(int)array[i][j][1];
-					if(j!=trace&&(trace!=-1||array[0][j][0]!=0)){
-						maxarray[i]=1;
+					if(j!=trace){
+						if(i!=0){
+							maxarray[i]=1;
+						}else if(array[i][j][0]!=0){
+							maxarray[i]=1;
+						}
 					}
 					j=trace;
 					i=i-1;
