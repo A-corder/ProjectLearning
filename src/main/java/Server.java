@@ -98,7 +98,7 @@ class ServerThread extends Thread {
             for (ArrayList<Object> video : sortedData) {
                 writer.write("タイトル: " + video.get(0));
                 writer.newLine();
-                writer.write("URL: https://www.youtube.com/watch?v=" + video.get(3));
+                writer.write("URL: https://www.youtube.com/watch?v=" + video.get(2));
                 writer.newLine();
             }
             
