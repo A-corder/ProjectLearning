@@ -102,7 +102,7 @@ import com.google.api.services.youtube.model.VideoListResponse;
 	    
 	    public static String getPlaylistURL(ArrayList<ArrayList<Object>> sortedData) throws InterruptedException {
 	    YouTube youtubeService;
-	    String playListURL = "https://www.youtube.com/watch?v=-wb2PAx6aEs&list=PLoE8WdcNzsqBXGhZidcrqONRLwfCn2Ybs";
+	    String playListURL = null;
 	    
 	    try {
 	        youtubeService = getService();
