@@ -146,9 +146,9 @@ public class Client {
                 }
             }
             
-            while(true) {
+            //while(true) {
             	//main関数を終わらせないための無限ループ
-            }
+            //}
             
         } catch (Exception e) {
             System.out.println(e.toString());
