@@ -19,17 +19,11 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
-import com.google.api.services.youtube.model.PlaylistItem;
-import com.google.api.services.youtube.model.PlaylistItemSnippet;
-import com.google.api.services.youtube.model.PlaylistSnippet;
-import com.google.api.services.youtube.model.PlaylistStatus;
-import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 
@@ -99,33 +93,7 @@ import com.google.api.services.youtube.model.VideoListResponse;
 	        }
 	        return allvideo;
 	    }
-	    
-	    public static String getPlaylistURL(ArrayList<ArrayList<Object>> sortedData) throws InterruptedException {
-    YouTube youtubeService;
-    String playListURL = "";
-    
-    try {
-        youtubeService = getService();
-        
-        // プレイリストを作成
-        com.google.api.services.youtube.model.Playlist youTubePlaylist = createPlaylist(youtubeService, "New Playlist", "A playlist created using the YouTube Data API");
-        String playlistId = youTubePlaylist.getId(); // ここでIDを取得
-        System.out.println("Created Playlist ID: " + playlistId);
-        playListURL = "https://www.youtube.com/playlist?list=" + playlistId;
-        System.out.println("Playlist URL: " + playListURL);
-        
-        // プレイリストに動画を入れ込む
-        for (List<Object> video : sortedData) {
-            String videoId = String.valueOf(video.get(3));
-            addVideoToPlaylist(youtubeService, playlistId, videoId);
-        }
-        
-    } catch (GeneralSecurityException | IOException e) {
-        e.printStackTrace();
-    }
-    
-    return playListURL;
-}
+
 
 
 	    private static YouTube getService() throws GeneralSecurityException, IOException {
@@ -153,85 +121,9 @@ import com.google.api.services.youtube.model.VideoListResponse;
          	    .setAccessType("offline")
         	    .build();
 
-    		LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+    		LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8080).build();
     		return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
 	    }
 
-
-	    private static com.google.api.services.youtube.model.Playlist createPlaylist(YouTube youtubeService, String title, String description) throws IOException {
-    PlaylistSnippet playlistSnippet = new PlaylistSnippet();
-    playlistSnippet.setTitle(title);
-    playlistSnippet.setDescription(description);
-
-    PlaylistStatus playlistStatus = new PlaylistStatus();
-    playlistStatus.setPrivacyStatus("public");
-
-    com.google.api.services.youtube.model.Playlist youTubePlaylist = new com.google.api.services.youtube.model.Playlist();
-    youTubePlaylist.setSnippet(playlistSnippet);
-    youTubePlaylist.setStatus(playlistStatus);
-
-    YouTube.Playlists.Insert playlistInsertCommand = youtubeService.playlists().insert("snippet,status", youTubePlaylist);
-    com.google.api.services.youtube.model.Playlist playlistInserted = playlistInsertCommand.execute();
-    return playlistInserted;
-}
-
-	    
-	    private static void addVideoToPlaylist(YouTube youtubeService, String playlistId, String videoId) throws IOException {
-	        ResourceId resourceId = new ResourceId();
-	        resourceId.setKind("youtube#video");
-	        resourceId.setVideoId(videoId);
-
-	        PlaylistItemSnippet playlistItemSnippet = new PlaylistItemSnippet();
-	        playlistItemSnippet.setPlaylistId(playlistId);
-	        playlistItemSnippet.setResourceId(resourceId);
-
-	        PlaylistItem playlistItem = new PlaylistItem();
-	        playlistItem.setSnippet(playlistItemSnippet);
-
-	        YouTube.PlaylistItems.Insert request = youtubeService.playlistItems()
-	                .insert("snippet", playlistItem);
-
-	        int maxRetries = 5;
-	        int attempt = 0;
-	        boolean success = false;
-
-	        while (attempt < maxRetries && !success) {
-	            try {
-	                PlaylistItem response = request.execute();
-	                System.out.println("Added video to playlist: " + response.getSnippet().getTitle());
-	                success = true;
-	            } catch (GoogleJsonResponseException e) {
-	                if (e.getStatusCode() == 409) {
-	                    System.out.println("Conflict error, retrying...");
-	                    attempt++;
-	                    try {
-	                        Thread.sleep(1000 * attempt); // 再試行前に待機する（指数バックオフ）
-	                    } catch (InterruptedException ie) {
-	                        Thread.currentThread().interrupt();
-	                    }
-	                } else {
-	                    throw e;
-	                }
-	            }
-	        }
-
-	        if (!success) {
-	            throw new IOException("Failed to add video to playlist after " + maxRetries + " attempts");
-	        }
-	    }
-
-
-	    /*public static void main(String[] args) throws InterruptedException {
-	        ArrayList<ArrayList<Object>> videoData = processSearchWord("米津玄師");
-	        String playListURL = getPlaylistURL(videoData);
-	        System.out.println("Playlist URL: " + playListURL);
-	        for (List<Object> video : videoData) {
-	            System.out.println("Title: " + video.get(0));
-	            System.out.println("Duration: " + video.get(1) + " seconds");
-	            System.out.println("View Count: " + video.get(2));
-	            System.out.println("Video ID: " + video.get(3));
-	            System.out.println();
-	        }
-	    }*/
 	}
 

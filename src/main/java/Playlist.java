@@ -3,7 +3,7 @@ package com.example.youtubeapi;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Playlist {
+public class PlaylistUtils {
 
     public static ArrayList<ArrayList<Object>> processAndSort(List<List<Object>> videoData, int time, int optimizationCondition) {
         int N = videoData.size();
@@ -50,7 +50,7 @@ public class Playlist {
 
 class setArray{
 	
-	static ArrayList<ArrayList<Object>> Arraylist = new ArrayList<ArrayList<Object>>();	//100曲を保存するArraList<ArrayList<Object>>
+	ArrayList<ArrayList<Object>> Arraylist = new ArrayList<ArrayList<Object>>();	//100曲を保存するArraList<ArrayList<Object>>
 	long[][][] array;			//動的計画法に必要な表(3次元)
 	int[] maxarray={0};			//解を保存する配列
 	
