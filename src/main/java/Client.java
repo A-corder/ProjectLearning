@@ -58,8 +58,9 @@ public class Client {
         //再生成なら、sendOperation呼び出す
         if (Regenerate) {
             try (Socket socket = setConnect(this.IP, this.port);
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
-                sendOperation(out);
+            		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+                    sendOperation(out, in);
             } catch (IOException e) {
                 System.out.println(e.toString());
             }
@@ -73,7 +74,7 @@ public class Client {
     }
     
     // 情報をサーバーに送る
-    public void sendOperation(BufferedWriter out) {
+    public void sendOperation(BufferedWriter out, BufferedReader in) {
         try {
             System.out.println("sendOperationはいってるよ");
             out.write(String.valueOf(this.time) + "\n");
@@ -85,6 +86,16 @@ public class Client {
             System.out.println("時間送信:" + this.time);
             System.out.println("検索ワード送信:" + this.keyword);
             System.out.println("最適化条件送信:" + this.condition);
+            
+            // サーバからのレスポンスを待つ
+            String responseLine;
+            while ((responseLine = in.readLine()) != null) {
+                this.user.fromClient(responseLine);
+                if (responseLine.equals("END")) {
+                    break;
+                }
+            }
+        
         } catch (Exception e) {
             System.out.println(e.toString());
         }
