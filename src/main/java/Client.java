@@ -55,6 +55,7 @@ public class Client {
         this.condition = condition;
         this.Regenerate = Regenerate;
         
+        //再生成なら、sendOperation呼び出す
         if (Regenerate) {
             try (Socket socket = setConnect(this.IP, this.port);
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
@@ -62,9 +63,9 @@ public class Client {
             } catch (IOException e) {
                 System.out.println(e.toString());
             }
-        } else {
-            check = true; // sendOperation()呼び出しフラグ
         }
+        check = true; // sendOperation()呼び出しフラグ
+        
         
         System.out.println("時間:" + this.time);
         System.out.println("検索ワード:" + this.keyword);
@@ -89,25 +90,9 @@ public class Client {
         }
     }
     
-    //ウィンドウが閉じられたことをサーバーに送る
-    public void sendENDmessage(BufferedWriter out) {
-    	try {
-    		out.write("WindowsClosed" + "\n");
-    	}catch(Exception e) {
-    		System.out.println(e.toString());
-    	}
-    	
-    }
-    
     public boolean checkFlag() {
         System.out.println("checkするよ");
         return check;
-    }
-    
-    public boolean initializeCheckFlag() {
-    	System.out.println("initializeCheckFlag呼び出し.checkをfalseにするよ");
-    	check = false;
-    	return check;
     }
     
     public static void main(String[] args) {

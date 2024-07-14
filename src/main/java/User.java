@@ -582,7 +582,6 @@ public class User {
 			sbPlayList.setLength(0); // StringBuilderをクリア
 		    sbURL.setLength(0); // StringBuilderをクリア
 		    Regenerate = true;//再生成フラグを上げる
-		    client.initializeCheckFlag();//クライアントクラスのcheckフラグをfalseに初期化
 			SearchFrame1 frame1 = new SearchFrame1();
 			this.setVisible(false);
 		}
