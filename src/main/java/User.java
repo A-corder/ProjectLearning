@@ -581,6 +581,8 @@ public class User {
 			count = 0;
 			sbPlayList.setLength(0); // StringBuilderをクリア
 		    sbURL.setLength(0); // StringBuilderをクリア
+		    flag = false;//検索画面に遷移するかを判断するフラグを初期化
+		    errorFlag =false;//エラー画面に遷移するかを判断するフラグを初期化
 		    Regenerate = true;//再生成フラグを上げる
 			SearchFrame1 frame1 = new SearchFrame1();
 			this.setVisible(false);
@@ -623,8 +625,8 @@ public class User {
 			count = 0;
 			sbPlayList.setLength(0); // StringBuilderをクリア
 		    sbURL.setLength(0); // StringBuilderをクリア
-		    flag = false;
-		    errorFlag =false; 
+		    flag = false;//検索画面に遷移するかを判断するフラグを初期化
+		    errorFlag =false; //エラー画面に遷移するかを判断するフラグを初期化
 		    
 		    //ホーム画面へ
 		    Home home = new Home();
