@@ -1,5 +1,3 @@
-package com.example.youtubeapi;
-
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
@@ -42,6 +40,7 @@ public class User {
 	private String URL;//最終画面表示用プレイリストURL
 	private boolean flag = false; //検索画面に遷移するかを判断するフラグ
 	private boolean errorFlag = false; //エラー画面に遷移するかを判断するフラグ
+	private boolean Regenerate = false; //再生成かを判断するフラグ
 	
 	//画面遷移
 	public User(Client client) {
@@ -471,13 +470,14 @@ public class User {
 			c = getContentPane();//フレームのペインを取得
 			c.setLayout(null);
 			
-			client.fromUser(viewTime, searchWord,condition);
+			//クライアントクラスへデータを送る
+			client.fromUser(viewTime, searchWord,condition,Regenerate);
 			
 			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 			
-			// サーバーの応答を待つスレッドを開始
+			// サーバーの応答を待つスレッドを開始（生成待機画面表示）
             new Thread(() -> {
                 while (true) {
                     if (checkFlag()) {
@@ -581,6 +581,8 @@ public class User {
 			count = 0;
 			sbPlayList.setLength(0); // StringBuilderをクリア
 		    sbURL.setLength(0); // StringBuilderをクリア
+		    Regenerate = true;//再生成フラグを上げる
+		    client.initializeCheckFlag();//クライアントクラスのcheckフラグをfalseに初期化
 			SearchFrame1 frame1 = new SearchFrame1();
 			this.setVisible(false);
 		}
@@ -597,10 +599,12 @@ public class User {
 			setTitle("エラー発生");//上のタイトル指定
 			setSize(800,600);//画面のサイズ指定
 			
+			//背景設定
 			setContentPane(new BackgroundPanel("errorAgain.png"));
 			c = getContentPane();//フレームのペインを取得
 			c.setLayout(null);
 			
+			//ボタン設定
 			generateButton = new JButton("ホーム画面へ",homeIcon);
 			generateButton.setFont(new Font("MS Gothic", Font.BOLD, 24));
 			generateButton.setForeground(Color.WHITE);//文字を白に
@@ -613,16 +617,17 @@ public class User {
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setVisible(true);
 			
-			
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			//カウント、テキストエリアを初期化
+			//カウント、テキストエリア、フラグを初期化
 			count = 0;
 			sbPlayList.setLength(0); // StringBuilderをクリア
 		    sbURL.setLength(0); // StringBuilderをクリア
 		    flag = false;
 		    errorFlag =false; 
+		    
+		    //ホーム画面へ
 		    Home home = new Home();
 			this.setVisible(false);
 		}

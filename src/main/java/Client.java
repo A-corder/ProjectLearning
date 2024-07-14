@@ -1,5 +1,3 @@
-package com.example.youtubeapi;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -19,7 +17,10 @@ public class Client {
     int condition; // 最適化条件
     User user;
     
-    static boolean check = false; // メソッド呼び出しタイミング調整用
+    //ユーザークラスから送られてくるフラグ
+    boolean Regenerate; //再生成であるかどうかを判断するフラグ
+    
+    static boolean check = false; // sendOperationメソッドを最初に呼び出すタイミング調整用フラグ
     
     // コンストラクタ
     Client(String IP, int port) {
@@ -48,11 +49,22 @@ public class Client {
     }
     
     // ユーザーからのメッセージを受け取る
-    public void fromUser(String time, String keyword, int condition) {
+    public void fromUser(String time, String keyword, int condition, boolean Regenerate) {
         this.time = Integer.parseInt(time);
         this.keyword = keyword;
         this.condition = condition;
-        check = true; // sendOperation()呼び出しフラグ
+        this.Regenerate = Regenerate;
+        
+        if (Regenerate) {
+            try (Socket socket = setConnect(this.IP, this.port);
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+                sendOperation(out);
+            } catch (IOException e) {
+                System.out.println(e.toString());
+            }
+        } else {
+            check = true; // sendOperation()呼び出しフラグ
+        }
         
         System.out.println("時間:" + this.time);
         System.out.println("検索ワード:" + this.keyword);
@@ -77,9 +89,25 @@ public class Client {
         }
     }
     
+    //ウィンドウが閉じられたことをサーバーに送る
+    public void sendENDmessage(BufferedWriter out) {
+    	try {
+    		out.write("WindowsClosed" + "\n");
+    	}catch(Exception e) {
+    		System.out.println(e.toString());
+    	}
+    	
+    }
+    
     public boolean checkFlag() {
         System.out.println("checkするよ");
         return check;
+    }
+    
+    public boolean initializeCheckFlag() {
+    	System.out.println("initializeCheckFlag呼び出し.checkをfalseにするよ");
+    	check = false;
+    	return check;
     }
     
     public static void main(String[] args) {
