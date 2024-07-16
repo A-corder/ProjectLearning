@@ -1,3 +1,5 @@
+package com.example.youtubeapi;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -19,9 +21,13 @@ public class Client {
     
     //ユーザークラスから送られてくるフラグ
     boolean Regenerate; //再生成であるかどうかを判断するフラグ
-    
+
     static boolean check = false; // sendOperationメソッドを最初に呼び出すタイミング調整用フラグ
     
+    private Socket socket = null; // ソケット
+    private BufferedWriter out = null; // 出力バッファ
+    private BufferedReader in = null; // 入力バッファ
+
     // コンストラクタ
     Client(String IP, int port) {
         this.IP = IP;
@@ -48,25 +54,25 @@ public class Client {
         }
     }
     
+
     // ユーザーからのメッセージを受け取る
     public void fromUser(String time, String keyword, int condition, boolean Regenerate) {
         this.time = Integer.parseInt(time);
         this.keyword = keyword;
         this.condition = condition;
         this.Regenerate = Regenerate;
-        
-        //再生成なら、sendOperation呼び出す
+
         if (Regenerate) {
             try (Socket socket = setConnect(this.IP, this.port);
-            		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-                    sendOperation(out, in);
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+                sendOperation(out, in);
             } catch (IOException e) {
                 System.out.println(e.toString());
             }
+        } else {
+            check = true; // sendOperation()呼び出しフラグ
         }
-        check = true; // sendOperation()呼び出しフラグ
-        
         
         System.out.println("時間:" + this.time);
         System.out.println("検索ワード:" + this.keyword);
@@ -86,7 +92,7 @@ public class Client {
             System.out.println("時間送信:" + this.time);
             System.out.println("検索ワード送信:" + this.keyword);
             System.out.println("最適化条件送信:" + this.condition);
-            
+
             // サーバからのレスポンスを待つ
             String responseLine;
             while ((responseLine = in.readLine()) != null) {
@@ -95,15 +101,30 @@ public class Client {
                     break;
                 }
             }
-        
         } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
     
+    //ウィンドウが閉じられたことをサーバーに送る
+    public void sendENDmessage(BufferedWriter out) {
+    	try {
+    		out.write("WindowsClosed" + "\n");
+    	}catch(Exception e) {
+    		System.out.println(e.toString());
+    	}
+
+    }
+
     public boolean checkFlag() {
         System.out.println("checkするよ");
         return check;
+    }
+
+    public boolean initializeCheckFlag() {
+    	System.out.println("initializeCheckFlag呼び出し.checkをfalseにするよ");
+    	check = false;
+    	return check;
     }
     
     public static void main(String[] args) {
@@ -141,14 +162,10 @@ public class Client {
                 if (client.checkFlag() == true) {
                     System.out.println("sendOperation呼び出すよ");
                     // サーバー側へユーザープログラムの入力を送信
-                    client.sendOperation(out);
+                    client.sendOperation(out, in);
                     break;
                 }
             }
-            
-            //while(true) {
-            	//main関数を終わらせないための無限ループ
-            //}
             
         } catch (Exception e) {
             System.out.println(e.toString());
@@ -190,4 +207,3 @@ class Receiver extends Thread {
         }
     }
 }
-
